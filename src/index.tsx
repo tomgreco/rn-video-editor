@@ -17,6 +17,4 @@ const RnVideoEditor = NativeModules.RnVideoEditor
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return RnVideoEditor.multiply(a, b);
-}
+export default RnVideoEditor;
