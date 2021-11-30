@@ -17,4 +17,9 @@ const RnVideoEditor = NativeModules.RnVideoEditor
       }
     );
 
-export default RnVideoEditor;
+export function mergeVideos(
+  filePaths: string[],
+  failureCallback: (results: string) => void,
+  successCallback: (results: string, file: string) => void): void {
+  return RnVideoEditor.mergeVideos(filePaths, failureCallback, successCallback);
+}
