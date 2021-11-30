@@ -13,12 +13,12 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
                   :(RCTResponseSenderBlock)failureCallback
                   :(RCTResponseSenderBlock)successCallback) {
-    
+
     [self MergeVideos:filePaths successCallback:successCallback];
 }
 
 -(void)MergeVideos:(NSArray *)filePaths
-                  :(RCTResponseSenderBlock)successCallback
+                  successCallback:(RCTResponseSenderBlock)success
 {
 
     CGFloat totalDuration;
@@ -90,7 +90,7 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
                 break;
 
             case AVAssetExportSessionStatusCompleted:
-                successCallback(@[@"merge video complete", myDocumentPath]);
+                success(@[@"merge video complete", myDocumentPath]);
                 break;
 
             default:

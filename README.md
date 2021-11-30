@@ -11,7 +11,7 @@ npm install rn-video-editor
 ## Usage
 
 ```js
-import { multiply } from "rn-video-editor";
+import { mergeVideos } from "rn-video-editor";
 
 // ...
 
