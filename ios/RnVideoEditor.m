@@ -10,14 +10,15 @@ RCT_EXPORT_MODULE()
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
+RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
                   :(RCTResponseSenderBlock)failureCallback
                   :(RCTResponseSenderBlock)successCallback) {
     
-    [self MergeVideo:fileNames successCallback:successCallback];
+    [self MergeVideos:filePaths successCallback:successCallback];
 }
 
--(void)MergeVideo:(NSArray *)fileNames successCallback:(RCTResponseSenderBlock)successCallback
+-(void)MergeVideos:(NSArray *)filePaths
+                  :(RCTResponseSenderBlock)successCallback
 {
 
     CGFloat totalDuration;
@@ -34,7 +35,7 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
     CMTime insertTime = kCMTimeZero;
     CGAffineTransform originalTransform;
 
-    for (id object in fileNames)
+    for (id object in filePaths)
     {
 
         AVAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:object]];
