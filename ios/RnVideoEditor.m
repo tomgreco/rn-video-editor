@@ -35,20 +35,23 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
     CMTime insertTime = kCMTimeZero;
     CGAffineTransform originalTransform;
 
-    for (id object in filePaths)
+    for (id path in filePaths)
     {
-
-        AVAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:object]];
-
+        NSLog(path);
+        AVAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:path]];
+        
+        NSLog(@"Asset count: %lu", (unsigned long)[asset tracks].count);
         CMTimeRange timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
 
+        NSArray<AVAssetTrack *> *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
         [videoTrack insertTimeRange:timeRange
-                            ofTrack:[[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]
+                            ofTrack:[videoTracks objectAtIndex:0]
                              atTime:insertTime
                               error:nil];
 
+        NSArray<AVAssetTrack *> *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
         [audioTrack insertTimeRange:timeRange
-                            ofTrack:[[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0]
+                            ofTrack:[audioTracks objectAtIndex:0]
                              atTime:insertTime
                               error:nil];
 
@@ -65,17 +68,10 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
         videoTrack.preferredTransform = originalTransform;
     }
 
-    NSString* documentsDirectory= [self applicationDocumentsDirectory];
-    NSString * myDocumentPath = [documentsDirectory stringByAppendingPathComponent:@"merged_video.mp4"];
-    NSURL * urlVideoMain = [[NSURL alloc] initFileURLWithPath: myDocumentPath];
-
-    if([[NSFileManager defaultManager] fileExistsAtPath:myDocumentPath])
-    {
-        [[NSFileManager defaultManager] removeItemAtPath:myDocumentPath error:nil];
-    }
+    NSURL *outputURL = [RnVideoEditor getTusStoragePathForFileWithExtension:@"mp4"];
 
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetHighestQuality];
-    exporter.outputURL = urlVideoMain;
+    exporter.outputURL = outputURL;
     exporter.outputFileType = @"com.apple.quicktime-movie";
     exporter.shouldOptimizeForNetworkUse = YES;
 
@@ -90,7 +86,7 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
                 break;
 
             case AVAssetExportSessionStatusCompleted:
-                success(@[@"merge video complete", myDocumentPath]);
+                success(@[@"merge video complete", outputURL.absoluteString]);
                 break;
 
             default:
@@ -104,6 +100,38 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
+}
+
+
++ (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension {
+    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+    NSURL *documentDirectory = [urls firstObject];
+    NSURL *tusDir = [documentDirectory URLByAppendingPathComponent:@"TUS"];
+    
+    NSUUID *uuid = [NSUUID UUID];
+    NSURL *uuidDir = [tusDir URLByAppendingPathComponent:[uuid UUIDString]];
+    NSString *fileName = [NSString stringWithFormat:@"0.%@", fileExtension];
+    NSURL *filePath = [uuidDir URLByAppendingPathComponent:fileName];
+    
+    NSError *error = nil;
+    
+    BOOL doesExist = [[NSFileManager defaultManager] fileExistsAtPath:tusDir.path isDirectory:NULL];
+    if (!doesExist) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:tusDir.path withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            return nil;
+        }
+    }
+    
+    BOOL doesUuidDirExist = [[NSFileManager defaultManager] fileExistsAtPath:uuidDir.path isDirectory:NULL];
+    if (!doesUuidDirExist) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:uuidDir.path withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            return nil;
+        }
+    }
+    
+    return filePath;
 }
 
 @end
