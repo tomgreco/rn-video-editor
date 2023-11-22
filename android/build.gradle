@@ -19,7 +19,7 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('RnVideoEditor_compileSdkVersion', 29)
+    compileSdkVersion safeExtGet('RnVideoEditor_compileSdkVersion', 33)
     defaultConfig {
         minSdkVersion safeExtGet('RnVideoEditor_minSdkVersion', 21)
         targetSdkVersion safeExtGet('RnVideoEditor_targetSdkVersion', 33)
