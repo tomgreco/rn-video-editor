@@ -105,7 +105,13 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
     return basePath;
 }
 
-
+/**
+  If this logic ever changes update in:
+  - node_modules/react-native-vision-camera/ios/PhotoCaptureDelegate.swift
+  - node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.m
+  - node_modules/@cpm/react-native-photo-editor/ios/PhotoEditor.swift
+  - node_modules/rn-video-editor/ios/RnVideoEditor.m
+*/
 + (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension saveToDirectoryName:(NSString *)saveToDirectoryName {
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
     NSURL *documentDirectory = [urls firstObject];
