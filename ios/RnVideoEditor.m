@@ -11,14 +11,17 @@ RCT_EXPORT_MODULE()
 }
 
 RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
+                  saveToDirectoryName:(NSString *)saveToDirectoryName
                   :(RCTResponseSenderBlock)failureCallback
                   :(RCTResponseSenderBlock)successCallback) {
 
-    [self MergeVideos:filePaths successCallback:successCallback];
+    [self MergeVideos:filePaths saveToDirectoryName:saveToDirectoryName successCallback:successCallback];
 }
 
--(void)MergeVideos:(NSArray *)filePaths
-                  successCallback:(RCTResponseSenderBlock)success
+-(void)MergeVideos:
+                (NSArray *)filePaths
+                saveToDirectoryName:(NSString *)saveToDirectoryName
+                successCallback:(RCTResponseSenderBlock)success
 {
 
     CGFloat totalDuration;
@@ -68,7 +71,7 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
         videoTrack.preferredTransform = originalTransform;
     }
 
-    NSURL *outputURL = [RnVideoEditor getTusStoragePathForFileWithExtension:@"mp4"];
+    NSURL *outputURL = [RnVideoEditor getTusStoragePathForFileWithExtension:@"mp4" saveToDirectoryName:saveToDirectoryName ];
 
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetHighestQuality];
     exporter.outputURL = outputURL;
@@ -103,7 +106,7 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
 }
 
 
-+ (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension {
++ (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension saveToDirectoryName:(NSString *)saveToDirectoryName {
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
     NSURL *documentDirectory = [urls firstObject];
     NSURL *tusDir = [documentDirectory URLByAppendingPathComponent:@"TUS"];
