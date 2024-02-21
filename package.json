@@ -1,6 +1,6 @@
 {
   "name": "rn-video-editor",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Video editor for react native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
