@@ -15,7 +15,6 @@ import { mergeVideos } from "rn-video-editor";
 
 // ...
 
-const result = await multiply(3, 7);
 ```
 
 ## Contributing

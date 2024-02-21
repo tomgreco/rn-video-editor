@@ -115,18 +115,18 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
 + (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension saveToDirectoryName:(NSString *)saveToDirectoryName {
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
     NSURL *documentDirectory = [urls firstObject];
-    NSURL *tusDir = [documentDirectory URLByAppendingPathComponent:@"TUS"];
+    NSURL *cacheDir = [documentDirectory URLByAppendingPathComponent:saveToDirectoryName];
     
     NSUUID *uuid = [NSUUID UUID];
-    NSURL *uuidDir = [tusDir URLByAppendingPathComponent:[uuid UUIDString]];
+    NSURL *uuidDir = [cacheDir URLByAppendingPathComponent:[uuid UUIDString]];
     NSString *fileName = [NSString stringWithFormat:@"0.%@", fileExtension];
     NSURL *filePath = [uuidDir URLByAppendingPathComponent:fileName];
     
     NSError *error = nil;
     
-    BOOL doesExist = [[NSFileManager defaultManager] fileExistsAtPath:tusDir.path isDirectory:NULL];
+    BOOL doesExist = [[NSFileManager defaultManager] fileExistsAtPath:cacheDir.path isDirectory:NULL];
     if (!doesExist) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:tusDir.path withIntermediateDirectories:YES attributes:nil error:&error];
+        [[NSFileManager defaultManager] createDirectoryAtPath:cacheDir.path withIntermediateDirectories:YES attributes:nil error:&error];
         if (error) {
             return nil;
         }
