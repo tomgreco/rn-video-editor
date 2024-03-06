@@ -12,15 +12,17 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
                   saveToDirectoryName:(NSString *)saveToDirectoryName
+                  fileName:(NSString *)fileName
                   :(RCTResponseSenderBlock)failureCallback
                   :(RCTResponseSenderBlock)successCallback) {
 
-    [self MergeVideos:filePaths saveToDirectoryName:saveToDirectoryName successCallback:successCallback];
+    [self MergeVideos:filePaths saveToDirectoryName:saveToDirectoryName fileName:fileName successCallback:successCallback];
 }
 
 -(void)MergeVideos:
                 (NSArray *)filePaths
                 saveToDirectoryName:(NSString *)saveToDirectoryName
+                fileName:(NSString *)fileName
                 successCallback:(RCTResponseSenderBlock)success
 {
 
@@ -71,7 +73,7 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
         videoTrack.preferredTransform = originalTransform;
     }
 
-    NSURL *outputURL = [RnVideoEditor getTusStoragePathForFileWithExtension:@"mp4" saveToDirectoryName:saveToDirectoryName ];
+    NSURL *outputURL = [RnVideoEditor getTusStoragePathForFileWithExtension:@"mp4" saveToDirectoryName:saveToDirectoryName fileNameParam:fileName];
 
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetHighestQuality];
     exporter.outputURL = outputURL;
@@ -112,14 +114,14 @@ RCT_EXPORT_METHOD(mergeVideos:(NSArray *)filePaths
   - node_modules/@cpm/react-native-photo-editor/ios/PhotoEditor.swift
   - node_modules/rn-video-editor/ios/RnVideoEditor.m
 */
-+ (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension saveToDirectoryName:(NSString *)saveToDirectoryName {
++ (nullable NSURL *)getTusStoragePathForFileWithExtension:(NSString *)fileExtension saveToDirectoryName:(NSString *)saveToDirectoryName fileNameParam:(NSString *)fileNameParam {
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
     NSURL *documentDirectory = [urls firstObject];
     NSURL *cacheDir = [documentDirectory URLByAppendingPathComponent:saveToDirectoryName];
     
     NSUUID *uuid = [NSUUID UUID];
     NSURL *uuidDir = [cacheDir URLByAppendingPathComponent:[uuid UUIDString]];
-    NSString *fileName = [NSString stringWithFormat:@"0.%@", fileExtension];
+    NSString *fileName = [NSString stringWithFormat:@"%@.%@", fileNameParam, fileExtension];
     NSURL *filePath = [uuidDir URLByAppendingPathComponent:fileName];
     
     NSError *error = nil;
